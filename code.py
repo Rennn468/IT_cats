@@ -58,6 +58,7 @@ enemy_timer = 0
 # Score
 score = 0
 
+# Collision detection function
 def check_collision(rect1, rect2):
     return pygame.Rect(rect1).colliderect(pygame.Rect(rect2))
 
@@ -82,6 +83,7 @@ def restart_game():
     game_over = False
     enemy_timer = 0
     pygame.mixer.music.play(-1)
+
 # Main game loop
 while True:
     for event in pygame.event.get():
@@ -98,58 +100,59 @@ while True:
             if event.key == pygame.K_r and game_over:
                 restart_game()
 
-        if not game_over:
-            # Handle player movement
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT] and player_x > 0:
-                player_x -= player_speed
-            if keys[pygame.K_RIGHT] and player_x < screen_width - player_width:
-                player_x += player_speed
-            # Update paw positions
-            for paw in paws:
-                paw[1] -= paw_speed
-            paws = [paw for paw in paws if paw[1] > 0]
+    if not game_over:
+       # Handle player movement
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and player_x > 0:
+            player_x -= player_speed
+        if keys[pygame.K_RIGHT] and player_x < screen_width - player_width:
+            player_x += player_speed
 
-            # Update enemy positions and spawn new ones
-            current_time = pygame.time.get_ticks()
-            if current_time - enemy_timer > enemy_spawn_time:
-                enemy_type = random.choice(['slow', 'fast'])
-                enemy_x = random.randint(0, screen_width - enemy_width)
-                enemy_y = -enemy_height
-                enemies.append([enemy_x, enemy_y, enemy_type, 1])
-                enemy_timer = current_time
+        # Update paw positions
+        for paw in paws:
+            paw[1] -= paw_speed
+        paws = [paw for paw in paws if paw[1] > 0]
 
-            for enemy in enemies:
-                if enemy[2] == 'slow':
-                    enemy[1] += enemy_speed_slow
-                else:
-                    enemy[1] += enemy_speed_fast
-            # Check for collisions between paws and enemies
-            for paw in paws[:]:
-                for enemy in enemies[:]:
-                    if check_collision((paw[0], paw[1], paw_width, paw_height),
-                                       (enemy[0], enemy[1], enemy_width, enemy_height)):
-                        paws.remove(paw)
-                        enemy[3] -= 1
+        # Update enemy positions and spawn new ones
+        current_time = pygame.time.get_ticks()
+        if current_time - enemy_timer > enemy_spawn_time:
+            enemy_type = random.choice(['slow', 'fast'])
+            enemy_x = random.randint(0, screen_width - enemy_width)
+            enemy_y = -enemy_height
+            enemies.append([enemy_x, enemy_y, enemy_type, 1])
+            enemy_timer = current_time
 
-                        if enemy[3] <= 0:
-                            enemies.remove(enemy)
-                            score += 1
+        for enemy in enemies:
+            if enemy[2] == 'slow':
+                enemy[1] += enemy_speed_slow
+            else:
+                enemy[1] += enemy_speed_fast
+        # Check for collisions between paws and enemies
+        for paw in paws[:]:
+         for enemy in enemies[:]:
+             if check_collision((paw[0], paw[1], paw_width, paw_height),
+                                (enemy[0], enemy[1], enemy_width, enemy_height)):
+                 paws.remove(paw)
+                 enemy[3] -= 1
 
-                        break
+                 if enemy[3] <= 0:
+                     enemies.remove(enemy)
+                     score += 1
 
-            # Remove enemies that are off the screen or have been destroyed
-            enemies = [enemy for enemy in enemies if enemy[1] < screen_height]
+                 break
 
-            # Check for collisions between player and enemies
-            for enemy in enemies[:]:
-                if check_collision((player_x, player_y, player_width, player_height),
-                                   (enemy[0], enemy[1], enemy_width, enemy_height)):
-                    player_health -= 1
-                    enemies.remove(enemy)
-                    if player_health <= 0:
-                        game_over = True
-                    break
+        # Remove enemies that are off the screen or have been destroyed
+        enemies = [enemy for enemy in enemies if enemy[1] < screen_height]
+
+        # Check for collisions between player and enemies
+        for enemy in enemies[:]:
+            if check_collision((player_x, player_y, player_width, player_height),
+                                (enemy[0], enemy[1], enemy_width, enemy_height)):
+                player_health -= 1
+                enemies.remove(enemy)
+                if player_health <= 0:
+                    game_over = True
+                break
         # Clear the screen and draw everything
         screen.blit(background_image, (0, 0))
 
@@ -172,13 +175,13 @@ while True:
         draw_text(f'Health: {player_health}', 30, (255, 255, 255), screen, 10, 50)
 
     else:
-    pygame.mixer.music.stop()
-    screen.fill((0, 0, 0))
-    draw_text('Game over', 60, (255, 0, 0), screen, screen_width // 2 - 150, screen_height // 2 - 30)
-    draw_text('(Нажмите R для перезапуска)', 30, (255, 255, 255), screen, screen_width // 2 - 160,
+        pygame.mixer.music.stop()
+        screen.fill((0, 0, 0))
+        draw_text('Game over', 60, (255, 0, 0), screen, screen_width // 2 - 150, screen_height // 2 - 30)
+        draw_text('(Нажмите R для перезапуска)', 30, (255, 255, 255), screen, screen_width // 2 - 160,
                   screen_height // 2 + 20)
 
-        # Update the display
+    # Update the display
     pygame.display.flip()
 
     # Cap the frame rate at 60 FPS
