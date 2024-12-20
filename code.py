@@ -138,7 +138,8 @@ def draw_text(text, size, color, surface, x, y):
     surface.blit(text_surface, (x, y))
 
 tick = 200
-
+score = 0
+player_health = 3
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -146,8 +147,7 @@ while True:
             break
 
     screen.blit(background_image, (0, 0))
-    score = 0
-    player_health = 3
+
     if player_health == 0:
         pygame.quit()
 
