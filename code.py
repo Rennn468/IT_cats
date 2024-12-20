@@ -1,7 +1,7 @@
-import pygame
 import sys
 from random import randint
 
+import pygame
 
 pygame.init()
 
@@ -10,10 +10,6 @@ screen_width = 800
 screen_height = 602
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Game")
-
-
-
-
 
 # Set the frame rate
 clock = pygame.time.Clock()
@@ -38,12 +34,11 @@ pygame.mixer.music.set_volume(0.5)
 # Start music
 pygame.mixer.music.play(-1)
 
+
 class Player:
     def __init__(self):
         self.player_width = 195
         self.player_height = 109
-        # self.player_x = screen_width // 2 - player_width // 2
-        # self.player_y = screen_height - player_height - 10
         self.player_speed = 5
         self.rect = pygame.Rect(
             screen_width // 2 - self.player_width // 2,
@@ -53,7 +48,8 @@ class Player:
         )
 
         self.pressed_shooting = False
-    def update (self):
+
+    def update(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and self.rect.x > 0:
             self.rect.x -= self.player_speed
@@ -68,6 +64,7 @@ class Player:
                 self.pressed_shooting = True
         else:  # if yes, do nothing and let user release the button
             self.pressed_shooting = False
+
     def draw(self):
         screen.blit(player_image, (self.rect.x, self.rect.y))
 
@@ -86,10 +83,13 @@ class Paw:
             self.paw_width,
             self.paw_height
         )
+
     def update(self):
         self.rect.y -= self.paw_speed
+
     def draw(self):
         screen.blit(paw_image, (self.rect.x, self.rect.y))
+
 
 paws = []
 
@@ -98,15 +98,16 @@ class Enemy:
     def __init__(self):
         self.enemy_width = 100
         self.enemy_height = 93
-        self.enemy_speed = randint(4,8)
+        self.enemy_speed = randint(4, 8)
         self.enemy_spawn_time = 2000
         self.enemy_timer = 0
         self.rect = pygame.Rect(
-            randint(0,800),
+            randint(0, 800),
             0,
             self.enemy_width,
             self.enemy_height
         )
+
     def update(self):
         self.rect.y += self.enemy_speed
 
@@ -117,13 +118,7 @@ class Enemy:
             screen.blit(enemy_image2, (self.rect.x, self.rect.y))
 
 
-
-
 enemies = []
-
-
-
-
 
 
 # Draw text function
@@ -131,6 +126,7 @@ def draw_text(text, size, color, surface, x, y):
     font = pygame.font.SysFont(None, size)
     text_surface = font.render(text, True, color)
     surface.blit(text_surface, (x, y))
+
 
 tick = 200
 score = 0
@@ -178,7 +174,8 @@ while True:
         pygame.mixer.music.stop()
         screen.fill((0, 0, 0))
         draw_text('Game over', 60, (255, 0, 0), screen, screen_width // 2 - 150, screen_height // 2 - 30)
-        draw_text('(Нажмите R для перезапуска)', 30, (255, 255, 255), screen, screen_width // 2 - 160, screen_height // 2 + 20)
+        draw_text('(Нажмите R для перезапуска)', 30, (255, 255, 255), screen, screen_width // 2 - 160,
+                  screen_height // 2 + 20)
         if pygame.key.get_pressed()[pygame.K_r]:
             enemies = []
             paws = []
