@@ -59,6 +59,11 @@ class Player:
         if keys[pygame.K_RIGHT] and self.rect.x < screen_width - self.player_width:
             self.rect.x += self.player_speed
 
+        # shooting
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            paws.append(Paw())
+
     def draw(self):
         screen.blit(player_image, (self.rect.x, self.rect.y))
 
@@ -79,16 +84,10 @@ class Paw:
         )
     def update(self):
         self.rect.y -= self.paw_speed
-    def draw (self):
+    def draw(self):
         screen.blit(paw_image, (self.rect.x, self.rect.y))
 
-paw = Paw()
-
-def shoot():
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_SPACE]:
-        paw.update()
-        paw.draw()
+paws = []
 
 
 class Enemy:
@@ -123,10 +122,6 @@ class Enemy:
 enemy = Enemy()
 
 
-def death():
-    if enemy.rect.colliderect(paw.rect):
-        paw.remove()
-        enemy.remove()
 
 
 
@@ -159,13 +154,17 @@ while True:
     player.update()
     player.draw()
 
-    shoot()
+    for paw in paws:
+        if paw.rect.y < 0:  # delete off-screen paws
+            paws.remove(paw)
+        else:
+            paw.update()
+            paw.draw()
+
 
     enemy.update()
     enemy.draw()
     enemy.lost()
-
-    death()
 
 
 
