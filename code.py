@@ -45,7 +45,6 @@ class Player:
         # self.player_x = screen_width // 2 - player_width // 2
         # self.player_y = screen_height - player_height - 10
         self.player_speed = 5
-        self.player_health = 3
         self.rect = pygame.Rect(
             screen_width // 2 - self.player_width // 2,
             screen_height - self.player_height - 10,
@@ -117,10 +116,6 @@ class Enemy:
         elif self.enemy_speed > 5:
             screen.blit(enemy_image2, (self.rect.x, self.rect.y))
 
-    def lost(self):
-        if self.rect.y >= screen_height:
-            player.player_health -= 1
-
 
 
 
@@ -148,49 +143,50 @@ while True:
 
     screen.blit(background_image, (0, 0))
 
-    if player_health == 0:
-        pygame.quit()
+    if player_health > 0:
+        tick -= 1
+        if tick <= 0:
+            enemies.append(Enemy())
+            tick = 200
 
-    tick -= 1
-    if tick <= 0:
-        enemies.append(Enemy())
-        tick = 200
+        player.update()
+        player.draw()
 
-    player.update()
-    player.draw()
-
-    for paw in paws:
-        if paw.rect.y < 0:  # delete off-screen paws
-            paws.remove(paw)
-        else:  # it's not off-screen, process it
-            paw.update()
-            paw.draw()
-
-    for enemy in enemies:
-        enemy.update()
-        enemy.draw()
-        if enemy.rect.y > screen_height:  # enemy passed through, subtract the score and no need to process further
-            enemies.remove(enemy)
-            player_health -= 1
-            continue
-        for paw in paws:  # we have to cycle through paws again here, since we need to update paws separately
-            if enemy.rect.colliderect(paw.rect):
+        for paw in paws:
+            if paw.rect.y < 0:  # delete off-screen paws
                 paws.remove(paw)
+            else:  # it's not off-screen, process it
+                paw.update()
+                paw.draw()
+
+        for enemy in enemies:
+            enemy.update()
+            enemy.draw()
+            if enemy.rect.y > screen_height:  # enemy passed through, subtract the score and no need to process further
                 enemies.remove(enemy)
-                score += 1
-
-
-
-
-
-    # Draw score and health on the screen
-    draw_text(f'Score: {score}', 30, (255, 255, 255), screen, 10, 10)
-    draw_text(f'Health: {player_health}', 30, (255, 255, 255), screen, 10, 50)
-    # else:
-    #    pygame.mixer.music.stop()
-    #    screen.fill((0, 0, 0))
-    #    draw_text('Game over', 60, (255, 0, 0), screen, screen_width // 2 - 150, screen_height // 2 - 30)
-    #    draw_text('(Нажмите R для перезапуска)', 30, (255, 255, 255), screen, screen_width // 2 - 160, screen_height // 2 + 20)
+                player_health -= 1
+                continue
+            for paw in paws:  # we have to cycle through paws again here, since we need to update paws separately
+                if enemy.rect.colliderect(paw.rect):
+                    paws.remove(paw)
+                    enemies.remove(enemy)
+                    score += 1
+        # Draw score and health on the screen
+        draw_text(f'Score: {score}', 30, (255, 255, 255), screen, 10, 10)
+        draw_text(f'Health: {player_health}', 30, (255, 255, 255), screen, 10, 50)
+    else:
+        pygame.mixer.music.stop()
+        screen.fill((0, 0, 0))
+        draw_text('Game over', 60, (255, 0, 0), screen, screen_width // 2 - 150, screen_height // 2 - 30)
+        draw_text('(Нажмите R для перезапуска)', 30, (255, 255, 255), screen, screen_width // 2 - 160, screen_height // 2 + 20)
+        if pygame.key.get_pressed()[pygame.K_r]:
+            enemies = []
+            paws = []
+            score = 0
+            player_health = 3
+            pygame.mixer.music.play(-1)
+            tick = 200
+            player.__init__()
 
     # Update the display
     pygame.display.flip()
