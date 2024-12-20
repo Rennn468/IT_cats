@@ -113,9 +113,9 @@ class Enemy:
         elif self.enemy_speed > 5:
             screen.blit(enemy_image2, (self.rect.x, self.rect.y))
 
-    def lost(self, player_health):
+    def lost(self):
         if self.rect.y >= screen_height:
-            player_health -= 1
+            player.player_health -= 1
 
 
 
@@ -163,7 +163,7 @@ while True:
 
     enemy.update()
     enemy.draw()
-    enemy.lost(player_health)
+    enemy.lost()
 
     death()
 
