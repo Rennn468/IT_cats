@@ -52,6 +52,8 @@ class Player:
             self.player_width,
             self.player_height
         )
+
+        self.pressed_shooting = False
     def update (self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and self.rect.x > 0:
@@ -62,8 +64,11 @@ class Player:
         # shooting
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
-            paws.append(Paw())
-
+            if not self.pressed_shooting:  # were we pressing in previous frame? if no, then shoot
+                paws.append(Paw())
+                self.pressed_shooting = True
+        else:  # if yes, do nothing and let user release the button
+            self.pressed_shooting = False
     def draw(self):
         screen.blit(player_image, (self.rect.x, self.rect.y))
 
