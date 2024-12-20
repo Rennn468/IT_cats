@@ -162,14 +162,24 @@ while True:
     for paw in paws:
         if paw.rect.y < 0:  # delete off-screen paws
             paws.remove(paw)
-        else:
+        else:  # it's not off-screen, process it
             paw.update()
             paw.draw()
 
     for enemy in enemies:
         enemy.update()
         enemy.draw()
-        enemy.lost()
+        if enemy.rect.y > screen_height:  # enemy passed through, subtract the score and no need to process further
+            enemies.remove(enemy)
+            player_health -= 1
+            continue
+        for paw in paws:  # we have to cycle through paws again here, since we need to update paws separately
+            if enemy.rect.colliderect(paw.rect):
+                paws.remove(paw)
+                enemies.remove(enemy)
+                score += 1
+
+
 
 
 
