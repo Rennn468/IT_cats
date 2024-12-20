@@ -77,8 +77,8 @@ class Paw:
         self.paw_height = 30
         self.paw_speed = 7
         self.rect = pygame.Rect(
-            player.rect.x,
-            player.rect.y,
+            player.rect.centerx,
+            player.rect.top,
             self.paw_width,
             self.paw_height
         )
