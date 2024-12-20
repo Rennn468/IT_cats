@@ -124,7 +124,7 @@ class Enemy:
 
 
 
-enemy = Enemy()
+enemies = []
 
 
 
@@ -153,7 +153,7 @@ while True:
 
     tick -= 1
     if tick <= 0:
-        enemy = Enemy()
+        enemies.append(Enemy())
         tick = 200
 
     player.update()
@@ -166,10 +166,10 @@ while True:
             paw.update()
             paw.draw()
 
-
-    enemy.update()
-    enemy.draw()
-    enemy.lost()
+    for enemy in enemies:
+        enemy.update()
+        enemy.draw()
+        enemy.lost()
 
 
 
